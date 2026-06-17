@@ -1,7 +1,7 @@
 #[derive(Debug, Clone)]
 pub struct ValueType(pub f64);
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum OpType {
     Const,
     Load,

@@ -121,3 +121,141 @@ pub fn construct_instructions(pair: Pair<Rule>, instructions: &mut Vec<Op>) -> R
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use pest::Parser;
+
+    use super::*;
+
+    #[test]
+    fn test_construct_const() {
+        let input = "a = 123.45";
+        let pairs = CalcParser::parse(Rule::expression, input).unwrap();
+        let mut instructions = Vec::new();
+        for pair in pairs {
+            construct_instructions(pair, &mut instructions).unwrap();
+        }
+        assert_eq!(instructions.len(), 2);
+        assert_eq!(instructions[0].op_type, OpType::Const);
+        assert_eq!(instructions[0].val.as_ref().unwrap().0, 123.45);
+        assert_eq!(instructions[1].op_type, OpType::Store);
+        assert_eq!(instructions[1].var.as_ref().unwrap(), "a");
+    }
+
+    #[test]
+    fn test_construct_load() {
+        let input = "a = b";
+        let pairs = CalcParser::parse(Rule::expression, input).unwrap();
+        let mut instructions = Vec::new();
+        for pair in pairs {
+            construct_instructions(pair, &mut instructions).unwrap();
+        }
+        assert_eq!(instructions.len(), 2);
+        assert_eq!(instructions[0].op_type, OpType::Load);
+        assert_eq!(instructions[0].var.as_ref().unwrap(), "b");
+        assert_eq!(instructions[1].op_type, OpType::Store);
+        assert_eq!(instructions[1].var.as_ref().unwrap(), "a");
+    }
+
+    #[test]
+    fn test_construct_add() {
+        let input = "a = b 2 +";
+        let pairs = CalcParser::parse(Rule::expression, input).unwrap();
+        let mut instructions = Vec::new();
+        for pair in pairs {
+            construct_instructions(pair, &mut instructions).unwrap();
+        }
+        assert_eq!(instructions.len(), 4);
+        assert_eq!(instructions[0].op_type, OpType::Load);
+        assert_eq!(instructions[0].var.as_ref().unwrap(), "b");
+        assert_eq!(instructions[1].op_type, OpType::Const);
+        assert_eq!(instructions[1].val.as_ref().unwrap().0, 2.0);
+        assert_eq!(instructions[2].op_type, OpType::Add);
+        assert_eq!(instructions[3].op_type, OpType::Store);
+        assert_eq!(instructions[3].var.as_ref().unwrap(), "a");
+    }
+
+    #[test]
+    fn test_construct_sub() {
+        let input = "a = b 2 -";
+        let pairs = CalcParser::parse(Rule::expression, input).unwrap();
+        let mut instructions = Vec::new();
+        for pair in pairs {
+            construct_instructions(pair, &mut instructions).unwrap();
+        }
+        assert_eq!(instructions.len(), 4);
+        assert_eq!(instructions[0].op_type, OpType::Load);
+        assert_eq!(instructions[0].var.as_ref().unwrap(), "b");
+        assert_eq!(instructions[1].op_type, OpType::Const);
+        assert_eq!(instructions[1].val.as_ref().unwrap().0, 2.0);
+        assert_eq!(instructions[2].op_type, OpType::Sub);
+        assert_eq!(instructions[3].op_type, OpType::Store);
+        assert_eq!(instructions[3].var.as_ref().unwrap(), "a");
+    }
+
+    #[test]
+    fn test_construct_mul() {
+        let input = "a = b 2 *";
+        let pairs = CalcParser::parse(Rule::expression, input).unwrap();
+        let mut instructions = Vec::new();
+        for pair in pairs {
+            construct_instructions(pair, &mut instructions).unwrap();
+        }
+        assert_eq!(instructions.len(), 4);
+        assert_eq!(instructions[0].op_type, OpType::Load);
+        assert_eq!(instructions[0].var.as_ref().unwrap(), "b");
+        assert_eq!(instructions[1].op_type, OpType::Const);
+        assert_eq!(instructions[1].val.as_ref().unwrap().0, 2.0);
+        assert_eq!(instructions[2].op_type, OpType::Mul);
+        assert_eq!(instructions[3].op_type, OpType::Store);
+        assert_eq!(instructions[3].var.as_ref().unwrap(), "a");
+    }
+
+    #[test]
+    fn test_construct_div() {
+        let input = "a = b 2 /";
+        let pairs = CalcParser::parse(Rule::expression, input).unwrap();
+        let mut instructions = Vec::new();
+        for pair in pairs {
+            construct_instructions(pair, &mut instructions).unwrap();
+        }
+        assert_eq!(instructions.len(), 4);
+        assert_eq!(instructions[0].op_type, OpType::Load);
+        assert_eq!(instructions[0].var.as_ref().unwrap(), "b");
+        assert_eq!(instructions[1].op_type, OpType::Const);
+        assert_eq!(instructions[1].val.as_ref().unwrap().0, 2.0);
+        assert_eq!(instructions[2].op_type, OpType::Div);
+        assert_eq!(instructions[3].op_type, OpType::Store);
+        assert_eq!(instructions[3].var.as_ref().unwrap(), "a");
+    }
+
+    #[test]
+    fn test_construct_multiple_expressions() {
+        let input = "a = 123.45\nb = 67.89\nc = a b + 2 *";
+        let pairs = CalcParser::parse(Rule::expression, input).unwrap();
+        let mut instructions = Vec::new();
+        for pair in pairs {
+            construct_instructions(pair, &mut instructions).unwrap();
+        }
+        assert_eq!(instructions.len(), 10);
+        assert_eq!(instructions[0].op_type, OpType::Const);
+        assert_eq!(instructions[0].val.as_ref().unwrap().0, 123.45);
+        assert_eq!(instructions[1].op_type, OpType::Store);
+        assert_eq!(instructions[1].var.as_ref().unwrap(), "a");
+        assert_eq!(instructions[2].op_type, OpType::Const);
+        assert_eq!(instructions[2].val.as_ref().unwrap().0, 67.89);
+        assert_eq!(instructions[3].op_type, OpType::Store);
+        assert_eq!(instructions[3].var.as_ref().unwrap(), "b");
+        assert_eq!(instructions[4].op_type, OpType::Load);
+        assert_eq!(instructions[4].var.as_ref().unwrap(), "a");
+        assert_eq!(instructions[5].op_type, OpType::Load);
+        assert_eq!(instructions[5].var.as_ref().unwrap(), "b");
+        assert_eq!(instructions[6].op_type, OpType::Add);
+        assert_eq!(instructions[7].op_type, OpType::Const);
+        assert_eq!(instructions[7].val.as_ref().unwrap().0, 2.0);
+        assert_eq!(instructions[8].op_type, OpType::Mul);
+        assert_eq!(instructions[9].op_type, OpType::Store);
+        assert_eq!(instructions[9].var.as_ref().unwrap(), "c");
+    }
+}
