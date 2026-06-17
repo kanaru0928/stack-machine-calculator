@@ -3,14 +3,14 @@ use std::collections::HashMap;
 use crate::stackmachine::ops::{Op, OpType, ValueType};
 
 #[derive(Debug, Clone)]
-pub struct Evalator {
+pub struct Evaluator {
     stack: Vec<ValueType>,
     env: HashMap<String, ValueType>,
 }
 
-impl Evalator {
+impl Evaluator {
     pub fn new() -> Self {
-        Evalator {
+        Evaluator {
             stack: Vec::new(),
             env: HashMap::new(),
         }
@@ -128,6 +128,10 @@ impl Evalator {
         }
         Ok(())
     }
+
+    pub fn get_env(&self) -> &HashMap<String, ValueType> {
+        &self.env
+    }
 }
 
 #[cfg(test)]
@@ -136,7 +140,7 @@ mod tests {
 
     #[test]
     fn test_const() {
-        let mut evalator = Evalator::new();
+        let mut evalator = Evaluator::new();
         let instructions = vec![Op {
             op_type: OpType::Const,
             val: Some(ValueType(42.0)),
@@ -149,7 +153,7 @@ mod tests {
 
     #[test]
     fn test_invalid_const() {
-        let mut evalator = Evalator::new();
+        let mut evalator = Evaluator::new();
         let instructions = vec![Op {
             op_type: OpType::Const,
             val: None,
@@ -161,7 +165,7 @@ mod tests {
 
     #[test]
     fn test_store() {
-        let mut evalator = Evalator::new();
+        let mut evalator = Evaluator::new();
         let instructions = vec![
             Op {
                 op_type: OpType::Const,
@@ -181,7 +185,7 @@ mod tests {
 
     #[test]
     fn test_invalid_store() {
-        let mut evalator = Evalator::new();
+        let mut evalator = Evaluator::new();
         let instructions = vec![Op {
             op_type: OpType::Store,
             val: None,
@@ -193,7 +197,7 @@ mod tests {
 
     #[test]
     fn test_load() {
-        let mut evalator = Evalator::new();
+        let mut evalator = Evaluator::new();
         evalator.env.insert("x".to_string(), ValueType(42.0));
         let instructions = vec![Op {
             op_type: OpType::Load,
@@ -207,7 +211,7 @@ mod tests {
 
     #[test]
     fn test_invalid_load() {
-        let mut evalator = Evalator::new();
+        let mut evalator = Evaluator::new();
         let instructions = vec![Op {
             op_type: OpType::Load,
             val: None,
@@ -219,7 +223,7 @@ mod tests {
 
     #[test]
     fn test_add() {
-        let mut evalator = Evalator::new();
+        let mut evalator = Evaluator::new();
         let instructions = vec![
             Op {
                 op_type: OpType::Const,
@@ -244,7 +248,7 @@ mod tests {
 
     #[test]
     fn test_sub() {
-        let mut evalator = Evalator::new();
+        let mut evalator = Evaluator::new();
         let instructions = vec![
             Op {
                 op_type: OpType::Const,
@@ -269,7 +273,7 @@ mod tests {
 
     #[test]
     fn test_mul() {
-        let mut evalator = Evalator::new();
+        let mut evalator = Evaluator::new();
         let instructions = vec![
             Op {
                 op_type: OpType::Const,
@@ -294,7 +298,7 @@ mod tests {
 
     #[test]
     fn test_div() {
-        let mut evalator = Evalator::new();
+        let mut evalator = Evaluator::new();
         let instructions = vec![
             Op {
                 op_type: OpType::Const,
@@ -319,7 +323,7 @@ mod tests {
 
     #[test]
     fn test_div_by_zero() {
-        let mut evalator = Evalator::new();
+        let mut evalator = Evaluator::new();
         let instructions = vec![
             Op {
                 op_type: OpType::Const,
