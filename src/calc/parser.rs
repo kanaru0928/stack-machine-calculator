@@ -33,10 +33,10 @@ pub fn construct_instructions(pair: Pair<Rule>, instructions: &mut Vec<Op>) -> R
         Rule::WHITESPACE => {
             return Err("Unexpected whitespace in instruction construction".into());
         }
-        Rule::alpha => {
+        Rule::ALPHA => {
             return Err("Unexpected alpha in instruction construction".into());
         }
-        Rule::digit => {
+        Rule::DIGIT => {
             return Err("Unexpected digit in instruction construction".into());
         }
         Rule::IDENT => {

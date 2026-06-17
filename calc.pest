@@ -1,9 +1,9 @@
 WHITESPACE = _{ " " | "\t" }
 
-alpha = _{ 'a'..'z' | 'A'..'Z' }
-digit = _{ '0'..'9' }
-IDENT = @{ alpha ~ (alpha | digit)* }
-NUMBER = @{ "-"? ~ digit+ ~ ("." ~ digit+)? }
+ALPHA = _{ 'a'..'z' | 'A'..'Z' }
+DIGIT = _{ '0'..'9' }
+IDENT = @{ ALPHA ~ (ALPHA | DIGIT)* }
+NUMBER = @{ "-"? ~ DIGIT+ ~ ("." ~ DIGIT+)? }
 
 PLUS = { "+" }
 MINUS = { "-" }
@@ -11,7 +11,7 @@ MUL = { "*" }
 DIV = { "/" }
 
 symbol = { PLUS | MINUS | MUL | DIV }
-atom = { (IDENT | NUMBER | symbol) }
+atom = { IDENT | NUMBER | symbol }
 
 term = {
     atom ~ term |
