@@ -1,3 +1,5 @@
+use std::{env, fs};
+
 use pest::Parser;
 
 use crate::{
@@ -9,9 +11,11 @@ mod calc;
 mod stackmachine;
 
 pub fn main() {
-    let input = "a = 123.45\nb = 67.89\nc = a b + 2 *";
+    let args: Vec<String> = env::args().collect();
 
-    let pairs = CalcParser::parse(Rule::expression, input).unwrap();
+    let input = fs::read_to_string(&args[1]).expect("Failed to read input file");
+
+    let pairs = CalcParser::parse(Rule::expression, &input).unwrap();
 
     println!("Parsed Pairs:");
     for pair in pairs.clone() {
