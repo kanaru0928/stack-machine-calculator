@@ -3,7 +3,7 @@ use std::{env, fs};
 use pest::Parser;
 
 use crate::{
-    calc::parser::{CalcParser, Rule, construct_instructions, print_tree},
+    calc::{parser::{CalcParser, Rule, print_tree}, trans::construct_instructions},
     stackmachine::eval::Evaluator,
 };
 
